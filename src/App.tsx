@@ -1,26 +1,34 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import Navigation from "./Parts/Navigation";
+import NavigationStore from "./Store/NavigationStore";
+
+import {
+    BaseStyles, Flex, BorderBox, Box
+} from '@primer/components'
+import Lab from "./Pages/Lab";
+import About from "./Pages/About";
+import {BrowserRouter, Route, Switch} from "react-router-dom";
+import LabSettingsStore from "./Store/LabSettingsStore";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    return (
+        <NavigationStore.Provider>
+            <BrowserRouter>
+                <BaseStyles>
+                    <Flex style={{width: '100vw', height: '100vh'}} justifyContent={"center"} alignItems={"start"}>
+                        <BorderBox mt={3} p={4} pt={0} width={1024} height={640}>
+                            <Navigation/>
+                            <Switch>
+                                <Route exact path="/lab" component={Lab}/>
+                                <Route exact path="/" component={About}/>
+                            </Switch>
+                        </BorderBox>
+                    </Flex>
+                </BaseStyles>
+            </BrowserRouter>
+        </NavigationStore.Provider>
+    );
 }
 
 export default App;
