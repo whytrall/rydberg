@@ -4,7 +4,7 @@ import Navigation from "./Parts/Navigation";
 import NavigationStore from "./Store/NavigationStore";
 
 import {
-    BaseStyles, Flex, BorderBox, Box
+    BaseStyles, Flex, BorderBox, Box, Grid
 } from '@primer/components'
 import Lab from "./Pages/Lab";
 import About from "./Pages/About";
@@ -13,6 +13,7 @@ import LabSettingsStore from "./Store/LabSettingsStore";
 
 function App() {
     return (
+        <LabSettingsStore.Provider>
         <NavigationStore.Provider>
             <BrowserRouter>
                 <BaseStyles>
@@ -28,6 +29,7 @@ function App() {
                 </BaseStyles>
             </BrowserRouter>
         </NavigationStore.Provider>
+        </LabSettingsStore.Provider>
     );
 }
 

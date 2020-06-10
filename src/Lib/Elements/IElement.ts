@@ -1,10 +1,10 @@
 declare interface IElement {
-    readonly code: String,
-    readonly name: String,
-    readonly russianName: String,
+    readonly code: string,
+    readonly name: string,
+    readonly russianName: string,
     readonly rydberg: number,
     readonly z: number
-    readonly wavelen: number[]
+    readonly waveLen: number[]
 }
 
 export default IElement
