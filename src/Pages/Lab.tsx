@@ -6,8 +6,8 @@ import LabSettingsStore from "../Store/LabSettingsStore";
 import SpectrumGenerator from "../Parts/Lab/SpectrumGenerator";
 
 function Lab() {
-    //let store = NavigationStore.useContainer()
-    //store.setCurrentPage(1)
+    let store = NavigationStore.useContainer()
+    store.setCurrentPage(1)
     let labStore = LabSettingsStore.useContainer()
     return (
         <Grid gridTemplateColumns="auto 300px" gridGap={3}>

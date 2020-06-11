@@ -10,8 +10,10 @@ function LabSidebar() {
                 <Box mb={3}>
                     <Heading fontSize={1} mb={1} as={"h4"}>Лапма</Heading>
                     <select style={{width: '100%'}} value={store.currentElement.code}
-                            onChange={(evt) => { store.setElementFromString(evt.target.value); }}>
-                        <option value={"He"}>ртутная</option>
+                            onChange={(evt) => {
+                                console.log(evt.target.value)
+                                store.setElementFromString(evt.target.value); }}>
+                        <option value={"Hg"}>ртутная</option>
                         <option value={"H"}>водородная</option>
                     </select>
                 </Box>

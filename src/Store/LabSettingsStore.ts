@@ -4,7 +4,7 @@ import {ElementHg, ElementH} from "../Lib/Elements/Elements";
 
 const LabSettingsStore = () => {
     let [currentElement, setCurrentElement] = useState(ElementHg)
-    let [currentHoleWidth, setCurrentHoleWidth] = useState(5)
+    let [currentHoleWidth, setCurrentHoleWidth] = useState(8)
 
     const setElementFromString = (name: String) => {
         switch (name) {

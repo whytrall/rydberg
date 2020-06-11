@@ -1,4 +1,5 @@
 import React, {MutableRefObject, useEffect, useRef} from "react";
+import {Box, Relative} from "@primer/components";
 
 type SpectrumGeneratorProps = {
     sWidth: number,
@@ -88,19 +89,21 @@ function SpectrumGenerator(props: SpectrumGeneratorProps) {
     const paintRef = useRef<HTMLCanvasElement>(document.createElement("canvas"))
     const linesRef = useRef<HTMLCanvasElement>(document.createElement("canvas"))
     const combinedRef = useRef<HTMLCanvasElement>(document.createElement("canvas"))
+    const lookupRef = useRef<HTMLCanvasElement>(document.createElement("canvas"))
 
     useEffect(() => {
         const paintCtx = paintRef.current.getContext("2d")
         const linesCtx = linesRef.current.getContext("2d")
-        const combinedCtx = combinedRef.current.getContext("2d")
         paintRef.current.width = props.sWidth
         paintRef.current.height = props.sHeight
         linesRef.current.width = props.sWidth
         linesRef.current.height = props.sHeight
         combinedRef.current.width = props.sWidth
         combinedRef.current.height = props.sHeight
+        lookupRef.current.width = props.sWidth*2
+        lookupRef.current.height = props.sHeight*2
 
-        if (paintCtx === null || linesCtx === null || combinedRef === null) return
+        if (paintCtx === null || linesCtx === null) return
 
         let gradient = paintCtx.createLinearGradient(0,0, props.sWidth,0)
 
@@ -121,7 +124,7 @@ function SpectrumGenerator(props: SpectrumGeneratorProps) {
         props.waveLen.forEach(el => {
             // 380 - min
             // 370 = 760-380 - max-min
-            linesCtx.fillRect((el-380)/370*props.sWidth, 0, props.lineWidth, props.sHeight);
+            linesCtx.fillRect(((el-380)/370*props.sWidth)-(props.lineWidth/2 | 0), 0, props.lineWidth, props.sHeight);
         })
 
         function copyCanvas(cnv: HTMLCanvasElement, oldArr: HTMLCanvasElement[]) {
@@ -132,22 +135,29 @@ function SpectrumGenerator(props: SpectrumGeneratorProps) {
                     cnt.drawImage(el, 0, 0)
                 }
                 else {
-                    console.log("hah")
+                    console.log("hahqwe")
                 }
             })
         }
 
         copyCanvas(combinedRef.current, [paintRef.current, linesRef.current])
+        copyCanvas(lookupRef.current, [combinedRef.current])
     })
     return(
-        <div>
+        <Box>
             <div className="canvases" hidden>
                 <canvas id="paint" ref={paintRef}/>
                 <canvas id="lines" ref={linesRef}/>
             </div>
 
             <canvas id="combined" ref={combinedRef}/>
-        </div>
+
+            <Relative className={"lookupWindow"} style={{borderRadius: "100%"}}
+                 mt={3} mx={"auto"} overflow={"hidden"}
+                 width={props.sHeight/1.5} height={props.sHeight/1.5}>
+                <canvas id="lookup" ref={lookupRef}/>
+            </Relative>
+        </Box>
     )
 }
 

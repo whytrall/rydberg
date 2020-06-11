@@ -13,23 +13,31 @@ import LabSettingsStore from "./Store/LabSettingsStore";
 
 function App() {
     return (
-        <LabSettingsStore.Provider>
-        <NavigationStore.Provider>
-            <BrowserRouter>
-                <BaseStyles>
-                    <Flex style={{width: '100vw', height: '100vh'}} justifyContent={"center"} alignItems={"start"}>
-                        <BorderBox mt={3} p={4} pt={0} width={1024} height={640}>
-                            <Navigation/>
-                            <Switch>
-                                <Route exact path="/lab" component={Lab}/>
-                                <Route exact path="/" component={About}/>
-                            </Switch>
-                        </BorderBox>
-                    </Flex>
-                </BaseStyles>
-            </BrowserRouter>
-        </NavigationStore.Provider>
-        </LabSettingsStore.Provider>
+
+                <BrowserRouter>
+                    <BaseStyles>
+                        <Flex style={{width: '100vw', height: '100vh'}} justifyContent={"center"} alignItems={"start"}>
+                            <BorderBox mt={3} p={4} pt={0} width={1024} height={640}>
+                                <Provider containers={[
+                                    {container: NavigationStore}
+                                ]}>
+
+                                </Provider>
+                                <NavigationStore.Provider>
+                                    <Navigation/>
+                                    <Switch>
+                                        <LabSettingsStore.Provider>
+                                            <Route exact path="/lab" component={Lab}/>
+                                        </LabSettingsStore.Provider>
+                                        <Route exact path="/" component={About}/>
+                                    </Switch>
+                                </NavigationStore.Provider>
+                            </BorderBox>
+                        </Flex>
+                    </BaseStyles>
+                </BrowserRouter>
+
+
     );
 }
 
