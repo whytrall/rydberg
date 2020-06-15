@@ -1,9 +1,10 @@
 import {Box, Button, Flex, Heading, Text, SideNav, BorderBox} from "@primer/components";
-import React from "react";
+import React, { useState } from "react";
 import LabSettingsStore from "../../Store/LabSettingsStore";
 
 function LabSidebar() {
     let store = LabSettingsStore.useContainer()
+    let [hrefImg, setHrefImg] = useState('#')
     return (
         <Box>
             <Box bg="blue.0" p={3}>
@@ -39,16 +40,8 @@ function LabSidebar() {
                         <Text>Показание монохроматора</Text>
                     </SideNav.Link>
                     <SideNav.Link href="#" onClick={(evt) => {
-                        let b = document.getElementById("download")
-                        if (b !== null) {
-                            b.setAttribute("href", combinedRef.current.toDataURL())
-                            b.click()
-                        }
-                        /*
-                        // @ts-ignore
-                        let cnv = document.getElementById("combined")
-                        console.log(cnv.toDataURL())
-                        evt.target.href = cnv.toDataURL()*/
+                        let cnv = document.getElementById("combined")?.toDataURL("image/png")
+                        setHrefImg(cnv)
                     }} download={"Spectrum.png"}>
                         <Text>Изображение</Text>
                     </SideNav.Link>
