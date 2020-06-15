@@ -21,3 +21,14 @@ export const ElementHg: IElement = {
         404.7
     ]
 }
+
+export const ElementTest: IElement = {
+    code: "test",
+    name: "Mercury",
+    russianName: "Ртуть",
+    waveLen: [
+        //400.0, 500.0, 600.0, 700.0,
+        //450.0, 550.0, 650.0, 750.0,
+        425.0, 525.0, 625.0, 725.0
+    ]
+}

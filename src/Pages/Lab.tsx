@@ -13,10 +13,10 @@ function Lab() {
         <Grid gridTemplateColumns="auto 300px" gridGap={3}>
                 <Box>
                     <SpectrumGenerator sWidth={658} sHeight={300}
-                                       waveLen={labStore.currentElement.waveLen} lineWidth={labStore.currentHoleWidth}/>
+                                       waveLen={labStore.currentElement.waveLen}
+                                       lineWidth={labStore.currentHoleWidth}/>
                 </Box>
                 <LabSidebar/>
-
         </Grid>
     );
 }

@@ -1,5 +1,6 @@
 import React, {MutableRefObject, useEffect, useRef} from "react";
-import {Box, Relative} from "@primer/components";
+import {Absolute, BorderBox, Box, Grid, Heading, Relative, Text} from "@primer/components";
+import LabSettingsStore from "../../Store/LabSettingsStore";
 
 type SpectrumGeneratorProps = {
     sWidth: number,
@@ -9,6 +10,9 @@ type SpectrumGeneratorProps = {
 }
 
 function SpectrumGenerator(props: SpectrumGeneratorProps) {
+    const waveLenMin = 380
+    const waveLenMax = 750
+
     const values = [
         [0.000000, 380, "#020005"],
         [0.013514, 385, "#020006"],
@@ -91,6 +95,8 @@ function SpectrumGenerator(props: SpectrumGeneratorProps) {
     const combinedRef = useRef<HTMLCanvasElement>(document.createElement("canvas"))
     const lookupRef = useRef<HTMLCanvasElement>(document.createElement("canvas"))
 
+    let store = LabSettingsStore.useContainer()
+
     useEffect(() => {
         const paintCtx = paintRef.current.getContext("2d")
         const linesCtx = linesRef.current.getContext("2d")
@@ -100,8 +106,8 @@ function SpectrumGenerator(props: SpectrumGeneratorProps) {
         linesRef.current.height = props.sHeight
         combinedRef.current.width = props.sWidth
         combinedRef.current.height = props.sHeight
-        lookupRef.current.width = props.sWidth*2
-        lookupRef.current.height = props.sHeight*2
+        lookupRef.current.width = props.sWidth//*2
+        lookupRef.current.height = props.sHeight//*2
 
         if (paintCtx === null || linesCtx === null) return
 
@@ -111,7 +117,7 @@ function SpectrumGenerator(props: SpectrumGeneratorProps) {
             gradient.addColorStop(el[0] as number, el[2] as string)
         });
 
-        paintCtx.filter = "brightness(300%)"
+        //paintCtx.filter = "brightness(300%)"
         paintCtx.fillStyle = gradient
         paintCtx.fillRect(0, 0, props.sWidth, props.sHeight)
 
@@ -119,23 +125,18 @@ function SpectrumGenerator(props: SpectrumGeneratorProps) {
         linesCtx.fillRect(0, 0, props.sWidth, props.sHeight)
 
         linesCtx.globalCompositeOperation = "destination-out";
-        //linesctx.filter = "blur(1px)"
+        //linesCtx.filter = "blur(0.45px)"
 
         props.waveLen.forEach(el => {
-            // 380 - min
-            // 370 = 760-380 - max-min
-            linesCtx.fillRect(((el-380)/370*props.sWidth)-(props.lineWidth/2 | 0), 0, props.lineWidth, props.sHeight);
+            linesCtx.fillRect(((el-waveLenMin)/(waveLenMax-waveLenMin)*props.sWidth)-(props.lineWidth/2 | 0), 0,
+                props.lineWidth, props.sHeight)
         })
 
         function copyCanvas(cnv: HTMLCanvasElement, oldArr: HTMLCanvasElement[]) {
             let cnt = cnv.getContext("2d")
             oldArr.forEach(el => {
                 if (cnt !== null) {
-                    console.log("hah")
                     cnt.drawImage(el, 0, 0)
-                }
-                else {
-                    console.log("hahqwe")
                 }
             })
         }
@@ -143,6 +144,19 @@ function SpectrumGenerator(props: SpectrumGeneratorProps) {
         copyCanvas(combinedRef.current, [paintRef.current, linesRef.current])
         copyCanvas(lookupRef.current, [combinedRef.current])
     })
+
+    function cylinderFn(x: number) {
+        let formula = 0.00008673024302563448*Math.pow(x,3)-0.16787118887668839307*Math.pow(x,2)+111.96884263237006962299*x-22743.82333636283874511719
+        formula = Math.round(formula)
+
+        if (formula % 2 !== 0) formula += 1
+
+        return formula
+    }
+
+    function saveImage() {
+        alert("kek")
+    }
     return(
         <Box>
             <div className="canvases" hidden>
@@ -150,13 +164,51 @@ function SpectrumGenerator(props: SpectrumGeneratorProps) {
                 <canvas id="lines" ref={linesRef}/>
             </div>
 
-            <canvas id="combined" ref={combinedRef}/>
+            <BorderBox border={0} borderRadius={1} overflow={"hidden"} height={props.sHeight} mb={3}>
+                <canvas id="combined" ref={combinedRef}/>
+            </BorderBox>
 
-            <Relative className={"lookupWindow"} style={{borderRadius: "100%"}}
-                 mt={3} mx={"auto"} overflow={"hidden"}
-                 width={props.sHeight/1.5} height={props.sHeight/1.5}>
-                <canvas id="lookup" ref={lookupRef}/>
-            </Relative>
+            <a href={"#"} id={"download"}
+               download={"Spectrum.png"} data-currEl={props.waveLen} data-currW={props.lineWidth} hidden>download</a>
+
+
+            <BorderBox border={1} p={3}>
+                <Grid gridTemplateColumns="200px auto" gridGap={3}>
+                    <Relative className={"lookupWindow"}
+                              mt={3} mx={"auto"}
+                              width={props.sHeight/1.5} height={props.sHeight/1.5}>
+                        <Relative style={{borderRadius: props.sHeight/1.5}} overflow={"hidden"}
+                             width={props.sHeight/1.5} height={props.sHeight/1.5}
+                             backgroundColor={"#000"}
+                        >
+                            <Absolute style={
+                                {
+                                    left: 100,
+                                    marginLeft: -(((store.currentWaveLen-waveLenMin)/(waveLenMax-waveLenMin))*props.sWidth)
+                                }
+                            }>
+                                <canvas id="lookup" ref={lookupRef}/>
+                            </Absolute>
+                        </Relative>
+
+                        <Absolute className={"arrow"} height={0} width={0}
+                                  bottom={0}
+                                  left={"calc(50% - 20px)"}
+                                  style={{borderColor: "white transparent", borderStyle: "solid", borderWidth: "0 20px 20px 20px"}}>
+                        </Absolute>
+                    </Relative>
+                    <Box>
+                        <Box mb={3}>
+                            <Heading fontSize={1} mb={1} as={"h4"} textAlign={"center"}>Показание монохроматора</Heading>
+                            <Text as={"div"} fontSize={4} textAlign={"center"}>{Math.round(cylinderFn(store.currentWaveLen))}</Text>
+                        </Box>
+                        <input style={{width: '100%'}} type={"range"} min={waveLenMin} max={waveLenMax} id="waveLen"
+                               value={store.currentWaveLen} step={0.1}
+                               onChange={(evt) => { store.setCurrentWaveLen(parseFloat(evt.target.value))}}/>
+                    </Box>
+                </Grid>
+            </BorderBox>
+
         </Box>
     )
 }
